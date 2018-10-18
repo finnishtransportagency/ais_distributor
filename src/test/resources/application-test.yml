@@ -1,0 +1,9 @@
+ais:
+  distributor:
+    credentials:
+      - username: "username"
+        password: "ENC(Xg7TVEHrNxx4gbIuDk5rXJ1SxDqoEkGd)"
+        allowed-endpoints:
+          - url: "/raw-data"
+          - url: "/parsed-data"
+          - url: "/raw-and-parsed-data"
