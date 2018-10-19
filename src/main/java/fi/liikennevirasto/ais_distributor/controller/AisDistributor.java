@@ -21,6 +21,7 @@
 package fi.liikennevirasto.ais_distributor.controller;
 
 import fi.liikennevirasto.ais_distributor.model.AisRadioMsg;
+import fi.liikennevirasto.ais_distributor.util.AisRadioMsgFilter;
 import fi.liikennevirasto.ais_distributor.util.AisRadioMsgParser;
 import fi.liikennevirasto.ais_distributor.websocket.AisWebSocketHandler;
 import org.slf4j.Logger;
@@ -36,14 +37,20 @@ public class AisDistributor {
     private final AisWebSocketHandler aisRawDataSocketHandler;
     private final AisWebSocketHandler aisParsedDataSocketHandler;
     private final AisWebSocketHandler aisRawAndParsedDataSocketHandler;
+    private final AisWebSocketHandler aisPublicParsedDataSocketHandler;
+    private final AisWebSocketHandler aisPublicGeoJsonDataSocketHandler;
 
     private String cachedFirstPart = null;
 
     @Autowired
-    public AisDistributor(AisWebSocketHandler aisRawDataSocketHandler, AisWebSocketHandler aisParsedDataSocketHandler, AisWebSocketHandler aisRawAndParsedDataSocketHandler) {
+    public AisDistributor(AisWebSocketHandler aisRawDataSocketHandler, AisWebSocketHandler aisParsedDataSocketHandler,
+                          AisWebSocketHandler aisRawAndParsedDataSocketHandler, AisWebSocketHandler aisPublicParsedDataSocketHandler,
+                          AisWebSocketHandler aisPublicGeoJsonDataSocketHandler) {
         this.aisRawDataSocketHandler = aisRawDataSocketHandler;
         this.aisParsedDataSocketHandler = aisParsedDataSocketHandler;
         this.aisRawAndParsedDataSocketHandler = aisRawAndParsedDataSocketHandler;
+        this.aisPublicParsedDataSocketHandler = aisPublicParsedDataSocketHandler;
+        this.aisPublicGeoJsonDataSocketHandler = aisPublicGeoJsonDataSocketHandler;
     }
 
     public void distribute(String data) {
@@ -54,15 +61,29 @@ public class AisDistributor {
         if (AisRadioMsgParser.isSupportedMessageType(data) && isReadyForParsing(data)) {
             AisRadioMsg msg = parse(data);
             if (msg != null) {
-                broadcastMessage(msg);
+                broadcastToAuthenticatedClients(msg);
+
+                if (AisRadioMsgFilter.allowedInPublicStream(msg)) {
+                    broadcastToPublicClients(msg);
+                }
             }
         }
     }
 
-    private void broadcastMessage(AisRadioMsg msg) {
+    private void broadcastToAuthenticatedClients(AisRadioMsg msg) {
         msg.getRawDataParts().forEach(aisRawDataSocketHandler::broadcast);
         aisParsedDataSocketHandler.broadcast(msg.toParsedDataString());
         aisRawAndParsedDataSocketHandler.broadcast(msg.toRawAndParsedDataString());
+    }
+
+    private void broadcastToPublicClients(AisRadioMsg msg) {
+        aisPublicParsedDataSocketHandler.broadcast(msg.toPublicParsedDataString());
+        if (msg.isPositionMsg()) {
+            String geoJsonStr = msg.toPublicGeoJsonDataString();
+            if (geoJsonStr != null) {
+                aisPublicGeoJsonDataSocketHandler.broadcast(geoJsonStr);
+            }
+        }
     }
 
     private void discardCachedFirstPartIfOrphan(String data) {

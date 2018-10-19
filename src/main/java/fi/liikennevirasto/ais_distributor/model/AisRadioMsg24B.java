@@ -27,28 +27,18 @@ import java.util.Map;
 
 import static fi.liikennevirasto.ais_distributor.model.AisRadioMsgParameters.*;
 
-public class AisRadioMsg19 extends AisPositionMsg implements AisShipTypeMsg {
+public class AisRadioMsg24B extends AisMetadataMsg implements AisShipTypeMsg {
 
-    public AisRadioMsg19(String binaryMsg, List<String> rawDataParts) {
+    public AisRadioMsg24B(String binaryMsg, List<String> rawDataParts) {
         super(binaryMsg, rawDataParts);
 
-        add(SPARE, getUnsignedInteger(8));
-        add(SOG, getUnsignedDecimal(10, 10, 1));
-        add(POSITION_ACCURACY, getUnsignedInteger(1));
-        add(LONGITUDE, getSignedDecimal(28, 600000, 6));
-        add(LATITUDE, getSignedDecimal(27, 600000, 6));
-        add(COG, getUnsignedDecimal(12, 10, 1));
-        add(TRUE_HEADING, getUnsignedInteger(9));
-        add(TIME_STAMP, getUnsignedInteger(6));
-        add(SPARE2, getUnsignedInteger(4));
-        add(NAME, getStringValue(120));
+        add(PART_NUMBER, getUnsignedInteger(2));
         add(TYPE_OF_SHIP_AND_CARGO_TYPE, getUnsignedInteger(8));
+        add(VENDOR_ID, getStringValue(42));
+        add(CALL_SIGN, getStringValue(42));
         add(DIMENSION_OF_SHIP_REFERENCE_FOR_POSITION, getUnsignedInteger(30));
         add(TYPE_OF_ELECTRONIC_POSITION_FIXING_DEVICE, getUnsignedInteger(4));
-        add(RAIM_FLAG, getUnsignedInteger(1));
-        add(DTE, getUnsignedInteger(1));
-        add(ASSIGNED_MODE_FLAG, getUnsignedInteger(1));
-        add(SPARE3, getUnsignedInteger(4));
+        add(SPARE, getUnsignedInteger(2));
     }
 
     @Override

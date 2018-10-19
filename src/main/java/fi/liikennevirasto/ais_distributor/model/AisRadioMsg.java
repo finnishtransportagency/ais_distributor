@@ -23,31 +23,13 @@ package fi.liikennevirasto.ais_distributor.model;
 import fi.liikennevirasto.ais_distributor.util.Ais6BitConverter;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class AisRadioMsg {
+import static fi.liikennevirasto.ais_distributor.model.AisRadioMsgParameters.*;
 
-    protected static final String SOG = "SOG";
-    protected static final String POSITION_ACCURACY = "Position accuracy";
-    protected static final String LONGITUDE = "Longitude";
-    protected static final String LATITUDE = "Latitude";
-    protected static final String COG = "COG";
-    protected static final String TIME_STAMP = "Time stamp";
-    protected static final String RESERVED_FOR_REGIONAL_APPLICATIONS = "Reserved for regional applications";
-    protected static final String DTE = "DTE";
-    protected static final String SPARE = "Spare";
-    protected static final String RAIM_FLAG = "RAIM-flag";
-    protected static final String COMMUNICATION_STATE = "Communication state";
-    protected static final String RESERVED_FOR_REGIONAL_OR_LOCAL_APPLICATIONS = "Reserved for regional or local applications";
-    protected static final String TRUE_HEADING = "True heading";
-
-    private static final String MESSAGE_ID = "Message ID";
-    private static final String REPEAT_INDICATOR = "Repeat indicator";
-    private static final String USER_ID = "User ID";
+public abstract class AisRadioMsg {
 
     private Map<String, Object> parameters = new LinkedHashMap<>(); // maintains insertion order
     private List<String> rawDataParts;
@@ -63,8 +45,40 @@ public class AisRadioMsg {
         add(USER_ID, getUnsignedInteger(30));
     }
 
-    protected <T> void add(String name, T value) {
+    protected final <T> void add(String name, T value) {
         parameters.put(name, value);
+    }
+
+    protected final BigDecimal getDecimalParam(String name) {
+        return (BigDecimal) parameters.get(name);
+    }
+
+    protected final int getIntParam(String name) {
+        return (int) parameters.get(name);
+    }
+
+    public final int getUserId() {
+        return getIntParam(USER_ID);
+    }
+
+    protected Set<Map.Entry<String, Object>> getParameterEntrySet() {
+        return parameters.entrySet();
+    }
+
+    public final List<String> toListOfKeys() {
+        return new ArrayList<>(parameters.keySet());
+    }
+
+    public final List<String> toListOfParsedValues() {
+        return toListOfValues(v -> v.getValue().toString());
+    }
+
+    public final List<String> toListOfPublicParsedValues() {
+        return toListOfValues(v -> getPublicValue(v).toString());
+    }
+
+    private List<String> toListOfValues(Function<Map.Entry<String, Object>, String> mapper) {
+        return getParameterEntrySet().stream().map(mapper).collect(Collectors.toList());
     }
 
     private String getNextSubstring(int size) {
@@ -96,16 +110,16 @@ public class AisRadioMsg {
     }
 
     protected String getStringValue(int size) {
-        return Ais6BitConverter.to6BitEncodedString(getNextSubstring(size));
-    }
-
-    public final List<String> getRawDataParts() {
-        return rawDataParts;
+        return Ais6BitConverter.to6BitEncodedString(getNextSubstring(size)).trim();
     }
 
     @Override
     public String toString() {
         return toRawAndParsedDataString();
+    }
+
+    public final List<String> getRawDataParts() {
+        return rawDataParts;
     }
 
     public final String toRawAndParsedDataString() {
@@ -117,14 +131,26 @@ public class AisRadioMsg {
     }
 
     public final String toParsedDataString() {
-        return parameters.entrySet().stream().map(v -> v.getKey() + ": " + v.getValue()).collect(Collectors.joining(", "));
+        return toDataString(v -> getParsedEntry(v.getKey(), v.getValue()));
     }
 
-    public final List<String> toListOfKeys() {
-        return new ArrayList<>(parameters.keySet());
+    public final String toPublicParsedDataString() {
+        return toDataString(v -> getParsedEntry(v.getKey(), getPublicValue(v)));
     }
 
-    public final List<String> toListOfParsedValues() {
-        return parameters.values().stream().map(Object::toString).collect(Collectors.toList());
+    public abstract String toPublicGeoJsonDataString();
+
+    public abstract boolean isPositionMsg();
+
+    private String toDataString(Function<Map.Entry<String, Object>, String> mapper) {
+        return getParameterEntrySet().stream().map(mapper).collect(Collectors.joining(", "));
+    }
+
+    private String getParsedEntry(String key, Object value) {
+        return key + ": " + value;
+    }
+
+    protected Object getPublicValue(Map.Entry<String, Object> v) { // default implementation
+        return v.getValue();
     }
 }

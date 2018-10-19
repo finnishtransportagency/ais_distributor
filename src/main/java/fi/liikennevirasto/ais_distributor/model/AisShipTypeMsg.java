@@ -8,9 +8,9 @@
  * the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,26 +18,10 @@
  * limitations under the Licence.
  * =====================================END========================================
  */
-package fi.liikennevirasto.ais_distributor.controller;
+package fi.liikennevirasto.ais_distributor.model;
 
-import fi.liikennevirasto.ais_distributor.client.AisWebSocketClient;
-import fi.liikennevirasto.ais_distributor.util.AisConnectionDetails;
-import org.java_websocket.client.WebSocketClient;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+public interface AisShipTypeMsg {
 
-@Configuration
-public class AisDistributorConfiguration {
-
-    @Bean
-    public AisConnectionDetails aisConnectionDetails(Environment env) {
-        return new AisConnectionDetails(env);
-    }
-
-    @Bean
-    public WebSocketClient webSocketClient(AisConnectionDetails aisConnectionDetails, AisDistributor aisDistributor) {
-        return new AisWebSocketClient(aisConnectionDetails.getUri(), aisDistributor);
-    }
+    int getShipAndCargoType();
 
 }

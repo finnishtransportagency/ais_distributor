@@ -22,73 +22,50 @@ package fi.liikennevirasto.ais_distributor.model;
 
 import fi.liikennevirasto.ais_distributor.util.AisRadioMsgParser;
 import org.hamcrest.collection.IsIterableContainingInOrder;
-import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class AisRadioMsg9Test {
+public class AisRadioMsg24ATest {
 
     @Test
-    public void testParseSingleMessage() throws JSONException {
+    public void testSingleMessage() {
 
-        String rawLine = "!AIVDO,1,1,,A,95M2oQ@41Tr4L4H@eRvQ;2h20000,0*0D";
+        String rawLinePartA = "!AIVDO,1,1,,B,H1c2;qA@PU>0U>060<h5=>0:1Dp,2*7D";
 
         List<String> expectedKeys = Arrays.asList(
                 "Message ID",
                 "Repeat indicator",
                 "User ID",
-                "Altitude (GNSS)",
-                "SOG",
-                "Position accuracy",
-                "Longitude",
-                "Latitude",
-                "COG",
-                "Time stamp",
-                "Altitude sensor",
-                "Spare",
-                "DTE",
-                "Spare (2)",
-                "Assigned mode flag",
-                "RAIM-flag",
-                "Communication state selector flag",
-                "Communication state");
+                "Part number",
+                "Name"
+        );
 
         List<String> expectedValues = Arrays.asList(
-                "9",
+                "24",
                 "0",
-                "366000005",
-                "16",
-                "100",
-                "1",
-                "-82.916460",
-                "29.205750",
-                "30.0",
-                "11",
+                "112233445",
                 "0",
-                "0",
-                "1",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0");
+                "THIS IS A CLASS B UN");
 
-        AisRadioMsg msg = AisRadioMsgParser.parseToAisRadioMessage(rawLine);
-        assertThat(msg, instanceOf(AisRadioMsg9.class));
+        AisRadioMsg msg = AisRadioMsgParser.parseToAisRadioMessage(rawLinePartA);
+        assertThat(msg, instanceOf(AisRadioMsg24A.class));
 
         Assert.assertThat(msg.toListOfKeys(), IsIterableContainingInOrder.contains(expectedKeys.toArray()));
         Assert.assertThat(msg.toListOfParsedValues(), IsIterableContainingInOrder.contains(expectedValues.toArray()));
         Assert.assertThat(msg.toListOfPublicParsedValues(), IsIterableContainingInOrder.contains(expectedValues.toArray())); // all values public
 
-        String expectedGeoJsonStr = GeoJsonTestUtil.getExpectedGeoJsonString(expectedKeys, expectedValues); // all values public
-        JSONAssert.assertEquals(expectedGeoJsonStr, msg.toPublicGeoJsonDataString(), JSONCompareMode.STRICT);
+        try {
+            msg.toPublicGeoJsonDataString();
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // ok, not a position message
+        }
     }
 }

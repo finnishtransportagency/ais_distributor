@@ -34,6 +34,8 @@ public class AisWebSocketConfiguration implements WebSocketConfigurer {
     private static final String RAW_DATA_ENDPOINT = "/raw-data";
     private static final String PARSED_DATA_ENDPOINT = "/parsed-data";
     private static final String RAW_AND_PARSED_DATA_ENDPOINT = "/raw-and-parsed-data";
+    private static final String PUBLIC_PARSED_DATA_ENDPOINT = "/public-parsed-data";
+    private static final String PUBLIC_GEOJSON_DATA_ENDPOINT = "/public-geojson-data";
 
     private final AisDistributorProperties aisDistributorProperties;
 
@@ -47,6 +49,9 @@ public class AisWebSocketConfiguration implements WebSocketConfigurer {
         registry.addHandler(aisRawDataSocketHandler(), RAW_DATA_ENDPOINT).setAllowedOrigins("*").addInterceptors(aisHandshakeInterceptor());
         registry.addHandler(aisParsedDataSocketHandler(), PARSED_DATA_ENDPOINT).setAllowedOrigins("*").addInterceptors(aisHandshakeInterceptor());
         registry.addHandler(aisRawAndParsedDataSocketHandler(), RAW_AND_PARSED_DATA_ENDPOINT).setAllowedOrigins("*").addInterceptors(aisHandshakeInterceptor());
+
+        registry.addHandler(aisPublicParsedDataSocketHandler(), PUBLIC_PARSED_DATA_ENDPOINT).setAllowedOrigins("*");
+        registry.addHandler(aisPublicGeoJsonDataSocketHandler(), PUBLIC_GEOJSON_DATA_ENDPOINT).setAllowedOrigins("*");
     }
 
     @Bean
@@ -69,4 +74,13 @@ public class AisWebSocketConfiguration implements WebSocketConfigurer {
         return new AisTextWebSocketHandler();
     }
 
+    @Bean
+    public AisWebSocketHandler aisPublicParsedDataSocketHandler() {
+        return new AisTextWebSocketHandler();
+    }
+
+    @Bean
+    public AisWebSocketHandler aisPublicGeoJsonDataSocketHandler() {
+        return new AisTextWebSocketHandler();
+    }
 }

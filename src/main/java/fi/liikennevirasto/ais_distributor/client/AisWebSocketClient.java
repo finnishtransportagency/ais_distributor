@@ -30,7 +30,7 @@ import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-public class AisWebSocketClient extends WebSocketClient {
+public class AisWebSocketClient extends WebSocketClient implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AisWebSocketClient.class);
 
@@ -64,6 +64,15 @@ public class AisWebSocketClient extends WebSocketClient {
     @Override
     public void onError(Exception ex) {
         LOGGER.error("Failed to connect to AIS Connector", ex);
+    }
+
+    @Override
+    public void close() {
+        try {
+            closeBlocking();
+        } catch (InterruptedException e) {
+            LOGGER.error("Failed to close WebSocket connection", e);
+        }
     }
 
 }

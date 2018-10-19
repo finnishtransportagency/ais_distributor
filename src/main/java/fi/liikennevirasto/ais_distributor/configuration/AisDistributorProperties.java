@@ -31,16 +31,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "ais")
 public class AisDistributorProperties {
 
-    private Connector connector;
     private Distributor distributor;
-
-    public Connector getConnector() {
-        return connector;
-    }
-
-    public void setConnector(Connector connector) {
-        this.connector = connector;
-    }
 
     public Distributor getDistributor() {
         return distributor;
@@ -48,20 +39,6 @@ public class AisDistributorProperties {
 
     public void setDistributor(Distributor distributor) {
         this.distributor = distributor;
-    }
-
-    public static class Connector {
-
-        private String aisDataEndpoint;
-
-        public String getAisDataEndpoint() {
-            return aisDataEndpoint;
-        }
-
-        public void setAisDataEndpoint(String aisDataEndpoint) {
-            this.aisDataEndpoint = aisDataEndpoint;
-        }
-
     }
 
     public static class Distributor {

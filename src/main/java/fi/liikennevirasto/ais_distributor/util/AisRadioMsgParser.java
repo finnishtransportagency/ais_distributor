@@ -32,7 +32,7 @@ public class AisRadioMsgParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(AisRadioMsgParser.class);
     private static final String PARSER_CLASS_BASE_NAME = "fi.liikennevirasto.ais_distributor.model.AisRadioMsg";
     private static final String SUPPORTED_MESSAGE_TYPE_REGEX = "!..VDM";
-    private static final Set<Integer> SUPPORTED_MESSAGE_IDS = new HashSet<>(Arrays.asList(1, 2, 3, 5, 9, 18, 19, 24, 27));
+    private static final Set<String> SUPPORTED_MESSAGE_CLASS_SUFFIXES = new HashSet<>(Arrays.asList("1", "2", "3", "5", "9", "18", "19", "24A", "24B", "27"));
 
     private enum RAW_LINE_COLUMN {
         MESSAGE_TYPE, TOTAL_NUMBER_OF_SENTENCES_NEEDED, SENTENCE_NUMBER,
@@ -67,20 +67,20 @@ public class AisRadioMsgParser {
     }
 
     private static AisRadioMsg parseToAisRadioMessage(List<String> rawLines, String binaryMsg) {
-        int msgId = getMessageId(binaryMsg);
+        String msgClassSuffix = getMessageClassSuffix(binaryMsg);
 
-        if (!SUPPORTED_MESSAGE_IDS.contains(msgId)) {
-            LOGGER.info("Unsupported message ID: " + msgId);
+        if (!SUPPORTED_MESSAGE_CLASS_SUFFIXES.contains(msgClassSuffix)) {
+            LOGGER.debug("Unsupported message: " + msgClassSuffix);
             return null;
         }
 
         try {
-            return (AisRadioMsg) Class.forName(PARSER_CLASS_BASE_NAME + msgId)
+            return (AisRadioMsg) Class.forName(PARSER_CLASS_BASE_NAME + msgClassSuffix)
                     .getDeclaredConstructor(String.class, List.class)
                     .newInstance(binaryMsg, rawLines);
         } catch (ClassNotFoundException e) {
-            LOGGER.info("Specific parser class not yet available for message ID " + msgId);
-            return new AisRadioMsg(binaryMsg, rawLines);
+            LOGGER.info("Parser class not available for message " + msgClassSuffix);
+            return null;
         } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
             LOGGER.error("Parsing failed for " + rawLines);
             return null;
@@ -103,7 +103,16 @@ public class AisRadioMsgParser {
         return Ais6BitConverter.to6Bit(getColumnValue(RAW_LINE_COLUMN.RADIO_MSG, rawLine));
     }
 
-    private static int getMessageId(String binaryMsg) {
-        return Integer.parseInt(binaryMsg.substring(0, 6), 2);
+    private static String getMessageClassSuffix(String binaryMsg) {
+        int msgId = Integer.parseInt(binaryMsg.substring(0, 6), 2);
+        String partStr = getPartIdString(binaryMsg, msgId);
+        return Integer.toString(msgId) + partStr;
+    }
+
+    private static String getPartIdString(String binaryMsg, int msgId) {
+        if (msgId == 24) {
+            return Integer.parseInt(binaryMsg.substring(38, 40), 2) == 1 ? "B" : "A";
+        }
+        return "";
     }
 }

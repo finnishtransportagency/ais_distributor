@@ -33,18 +33,18 @@ public class AisConnectionDetails {
 
     private final URI uri;
 
-    public AisConnectionDetails(Environment env, String aisDataEndpoint) {
+    public AisConnectionDetails(Environment env) {
         String user = env.getProperty(USER_ARG);
         String passwd = env.getProperty(PASSWD_ARG);
         String address = env.getProperty(ADDRESS_ARG);
         Integer port = toInteger(env.getProperty(PORT_ARG));
 
-        this.uri = createUri(user, passwd, address, port, aisDataEndpoint);
+        this.uri = createUri(user, passwd, address, port);
     }
 
-    private URI createUri(String user, String passwd, String address, Integer port, String aisDataEndpoint) {
+    private URI createUri(String user, String passwd, String address, Integer port) {
         try {
-            return new URI("ws", null, address, port, aisDataEndpoint, "username=" + user + "&passwd=" + passwd, null);
+            return new URI("ws", null, address, port, null, "username=" + user + "&passwd=" + passwd, null);
         } catch (URISyntaxException e) {
             return null;
         }

@@ -20,27 +20,29 @@
  */
 package fi.liikennevirasto.ais_distributor.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
-import static fi.liikennevirasto.ais_distributor.model.AisRadioMsgParameters.*;
+public class GeoJsonPointGeometry {
 
-public abstract class AisRadioMsg123Base extends AisPositionMsg {
+    private final BigDecimal longitude;
+    private final BigDecimal latitude;
 
-    public AisRadioMsg123Base(String binaryMsg, List<String> rawDataParts) {
-        super(binaryMsg, rawDataParts);
+    public GeoJsonPointGeometry(BigDecimal longitude, BigDecimal latitude) {
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
 
-        add(NAVIGATIONAL_STATUS, getUnsignedInteger(4));
-        add(RATE_OF_TURN, getSignedInteger(8));
-        add(SOG, getUnsignedDecimal(10, 10, 1));
-        add(POSITION_ACCURACY, getUnsignedInteger(1));
-        add(LONGITUDE, getSignedDecimal(28, 600000, 6));
-        add(LATITUDE, getSignedDecimal(27, 600000, 6));
-        add(COG, getUnsignedDecimal(12, 10, 1));
-        add(TRUE_HEADING, getUnsignedInteger(9));
-        add(TIME_STAMP, getUnsignedInteger(6));
-        add(SPECIAL_MANOEUVRE_INDICATOR, getUnsignedInteger(2));
-        add(SPARE, getUnsignedInteger(3));
-        add(RAIM_FLAG, getUnsignedInteger(1));
-        add(COMMUNICATION_STATE, getUnsignedInteger(19));
+    @JsonProperty
+    public GeoJsonType type() {
+        return GeoJsonType.POINT;
+    }
+
+    @JsonProperty
+    public List<BigDecimal> coordinates() {
+        return Arrays.asList(longitude, latitude);
     }
 }

@@ -8,9 +8,9 @@
  * the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,8 +44,7 @@ import static org.junit.Assert.*;
         "user=user",
         "passwd=passwd",
         "address=localhost",
-        "port=8080",
-        "jasypt.encryptor.password=password"
+        "port=8080"
 })
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AisWebSocketTest {
@@ -61,6 +60,12 @@ public class AisWebSocketTest {
 
     @Autowired
     private AisWebSocketHandler aisRawAndParsedDataSocketHandler;
+
+    @Autowired
+    private AisWebSocketHandler aisPublicParsedDataSocketHandler;
+
+    @Autowired
+    private AisWebSocketHandler aisPublicGeoJsonDataSocketHandler;
 
     @Test
     public void testRawDataWebSocketRead() throws Exception {
@@ -92,23 +97,47 @@ public class AisWebSocketTest {
         testWebSocketAuthentication("/raw-and-parsed-data");
     }
 
+    @Test
+    public void testPublicParsedDataWebSocketRead() throws Exception {
+        testPublicWebSocketRead("/public-parsed-data", aisPublicParsedDataSocketHandler);
+    }
+
+    @Test
+    public void testPublicGeoJsonDataWebSocketRead() throws Exception {
+        testPublicWebSocketRead("/public-geojson-data", aisPublicGeoJsonDataSocketHandler);
+    }
+
     private void testWebSocketRead(String endpoint, AisWebSocketHandler aisWebSocketHandler) throws Exception {
+        testWebSocketRead(aisWebSocketHandler, createUrl(endpoint, "username", "password"));
+    }
+
+    private void testPublicWebSocketRead(String endpoint, AisWebSocketHandler aisWebSocketHandler) throws Exception {
+        testWebSocketRead(aisWebSocketHandler, createPublicUrl(endpoint));
+    }
+
+    private void testWebSocketRead(AisWebSocketHandler aisWebSocketHandler, URI url) throws Exception {
         String expectedAisData = "!ABVDM,1,1,,A,1P000Oh1IT1svTP2r:43grwb05q4,0*01";
         AtomicReference<String> actualAisData = new AtomicReference<>();
 
         WebSocketClient webSocketClient = null;
         try {
-            webSocketClient = new WebSocketClient(createUrl(endpoint, "username", "password")) {
+            webSocketClient = new WebSocketClient(url) {
                 @Override
-                public void onOpen(ServerHandshake handshakedata) { }
+                public void onOpen(ServerHandshake handshakedata) {
+                }
+
                 @Override
                 public void onMessage(String message) {
                     actualAisData.set(message);
                 }
+
                 @Override
-                public void onClose(int code, String reason, boolean remote) {}
+                public void onClose(int code, String reason, boolean remote) {
+                }
+
                 @Override
-                public void onError(Exception ex) {}
+                public void onError(Exception ex) {
+                }
             };
             webSocketClient.connectBlocking(30, TimeUnit.SECONDS);
             for (int i = 0; aisWebSocketHandler.getWebSocketSessionCount() == 0; i++) {
@@ -133,15 +162,21 @@ public class AisWebSocketTest {
         try {
             webSocketClient = new WebSocketClient(createUrl(endpoint, "username", "invalid")) {
                 @Override
-                public void onOpen(ServerHandshake handshakedata) {}
+                public void onOpen(ServerHandshake handshakedata) {
+                }
+
                 @Override
-                public void onMessage(String message) {}
+                public void onMessage(String message) {
+                }
+
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
                     actualCloseReason.set(reason);
                 }
+
                 @Override
-                public void onError(Exception ex) {}
+                public void onError(Exception ex) {
+                }
             };
             webSocketClient.connectBlocking(30, TimeUnit.SECONDS);
         } finally {
@@ -154,7 +189,14 @@ public class AisWebSocketTest {
     }
 
     private URI createUrl(String path, String username, String password) throws URISyntaxException {
-        return new URI("ws://localhost:" + port + path + "?username=" + username + "&passwd=" + password);
+        return new URI(getUriPublicPart(path) + "?username=" + username + "&passwd=" + password);
     }
 
+    private URI createPublicUrl(String path) throws URISyntaxException {
+        return new URI(getUriPublicPart(path));
+    }
+
+    private String getUriPublicPart(String path) {
+        return "ws://localhost:" + port + path;
+    }
 }

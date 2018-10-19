@@ -22,24 +22,27 @@ package fi.liikennevirasto.ais_distributor.model;
 
 import java.util.List;
 
-public class AisRadioMsg9 extends AisRadioMsg {
+import static fi.liikennevirasto.ais_distributor.model.AisRadioMsgParameters.*;
 
-    private static final String ALTITUDE = "Altitude (GNSS)";
+public class AisRadioMsg9 extends AisPositionMsg {
 
     public AisRadioMsg9(String binaryMsg, List<String> rawDataParts) {
         super(binaryMsg, rawDataParts);
 
-        add(ALTITUDE, getUnsignedInteger(12));
+        add(ALTITUDE_GNSS, getUnsignedInteger(12));
         add(SOG, getUnsignedInteger(10));
         add(POSITION_ACCURACY, getUnsignedInteger(1));
         add(LONGITUDE, getSignedDecimal(28, 600000, 6));
         add(LATITUDE, getSignedDecimal(27, 600000, 6));
         add(COG, getUnsignedDecimal(12, 10, 1));
         add(TIME_STAMP, getUnsignedInteger(6));
-        add(RESERVED_FOR_REGIONAL_APPLICATIONS, getUnsignedInteger(8));
+        add(ALTITUDE_SENSOR, getUnsignedInteger(1));
+        add(SPARE, getUnsignedInteger(7));
         add(DTE, getUnsignedInteger(1));
-        add(SPARE, getUnsignedInteger(5));
+        add(SPARE2, getUnsignedInteger(3));
+        add(ASSIGNED_MODE_FLAG, getUnsignedInteger(1));
         add(RAIM_FLAG, getUnsignedInteger(1));
+        add(COMMUNICATION_STATE_SELECTOR_FLAG, getUnsignedInteger(1));
         add(COMMUNICATION_STATE, getUnsignedInteger(19));
     }
 }

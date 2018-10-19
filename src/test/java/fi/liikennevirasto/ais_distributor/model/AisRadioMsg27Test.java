@@ -34,55 +34,44 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class AisRadioMsg9Test {
+public class AisRadioMsg27Test {
 
     @Test
     public void testParseSingleMessage() throws JSONException {
 
-        String rawLine = "!AIVDO,1,1,,A,95M2oQ@41Tr4L4H@eRvQ;2h20000,0*0D";
+        String rawLine = "!AIVDM,1,1,,B,KC5E2b@U19PFdLbMuc5=ROv62<7m,0*16";
 
         List<String> expectedKeys = Arrays.asList(
                 "Message ID",
                 "Repeat indicator",
                 "User ID",
-                "Altitude (GNSS)",
-                "SOG",
                 "Position accuracy",
+                "RAIM-flag",
+                "Navigational status",
                 "Longitude",
                 "Latitude",
+                "SOG",
                 "COG",
-                "Time stamp",
-                "Altitude sensor",
-                "Spare",
-                "DTE",
-                "Spare (2)",
-                "Assigned mode flag",
-                "RAIM-flag",
-                "Communication state selector flag",
-                "Communication state");
+                "Position latency",
+                "Spare"
+        );
 
         List<String> expectedValues = Arrays.asList(
-                "9",
-                "0",
-                "366000005",
-                "16",
-                "100",
+                "27",
                 "1",
-                "-82.916460",
-                "29.205750",
-                "30.0",
-                "11",
+                "206914217",
                 "0",
                 "0",
-                "1",
+                "2",
+                "137.023333",
+                "4.840000",
+                "57",
+                "167",
                 "0",
-                "0",
-                "0",
-                "0",
-                "0");
+                "1");
 
         AisRadioMsg msg = AisRadioMsgParser.parseToAisRadioMessage(rawLine);
-        assertThat(msg, instanceOf(AisRadioMsg9.class));
+        assertThat(msg, instanceOf(AisRadioMsg27.class));
 
         Assert.assertThat(msg.toListOfKeys(), IsIterableContainingInOrder.contains(expectedKeys.toArray()));
         Assert.assertThat(msg.toListOfParsedValues(), IsIterableContainingInOrder.contains(expectedValues.toArray()));

@@ -16,9 +16,5 @@ management:
       exposure:
         include: refresh
 
-ais:
-  connector:
-    ais-data-endpoint: "/ais-data"
-
 server:
   port: 8081

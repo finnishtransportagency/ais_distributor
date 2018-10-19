@@ -70,8 +70,7 @@ public class AisWebSocketClientTest {
                     .withProperty("user", "user")
                     .withProperty("passwd", "passwd")
                     .withProperty("address", "localhost")
-                    .withProperty("port", String.valueOf(PORT)),
-                    "/ais-data");
+                    .withProperty("port", String.valueOf(PORT)));
         }
 
     }

@@ -22,25 +22,18 @@ package fi.liikennevirasto.ais_distributor.model;
 
 import java.util.List;
 
-import static fi.liikennevirasto.ais_distributor.model.AisRadioMsgParameters.*;
-
-public abstract class AisRadioMsg123Base extends AisPositionMsg {
-
-    public AisRadioMsg123Base(String binaryMsg, List<String> rawDataParts) {
+public abstract class AisMetadataMsg extends AisRadioMsg {
+    public AisMetadataMsg(String binaryMsg, List<String> rawDataParts) {
         super(binaryMsg, rawDataParts);
+    }
 
-        add(NAVIGATIONAL_STATUS, getUnsignedInteger(4));
-        add(RATE_OF_TURN, getSignedInteger(8));
-        add(SOG, getUnsignedDecimal(10, 10, 1));
-        add(POSITION_ACCURACY, getUnsignedInteger(1));
-        add(LONGITUDE, getSignedDecimal(28, 600000, 6));
-        add(LATITUDE, getSignedDecimal(27, 600000, 6));
-        add(COG, getUnsignedDecimal(12, 10, 1));
-        add(TRUE_HEADING, getUnsignedInteger(9));
-        add(TIME_STAMP, getUnsignedInteger(6));
-        add(SPECIAL_MANOEUVRE_INDICATOR, getUnsignedInteger(2));
-        add(SPARE, getUnsignedInteger(3));
-        add(RAIM_FLAG, getUnsignedInteger(1));
-        add(COMMUNICATION_STATE, getUnsignedInteger(19));
+    @Override
+    public final String toPublicGeoJsonDataString() {
+        throw new UnsupportedOperationException("GeoJSON operations unsupported for metadata messages");
+    }
+
+    @Override
+    public final boolean isPositionMsg() {
+        return false;
     }
 }

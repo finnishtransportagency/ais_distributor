@@ -22,14 +22,14 @@ package fi.liikennevirasto.ais_distributor.model;
 
 import java.util.List;
 
-public class AisRadioMsg18 extends AisRadioMsg {
+import static fi.liikennevirasto.ais_distributor.model.AisRadioMsgParameters.*;
 
-    private static final String COMMUNICATION_STATE_SELECTOR_FLAG = "Communication state selector flag";
+public class AisRadioMsg18 extends AisPositionMsg {
 
     public AisRadioMsg18(String binaryMsg, List<String> rawDataParts) {
         super(binaryMsg, rawDataParts);
 
-        add(RESERVED_FOR_REGIONAL_OR_LOCAL_APPLICATIONS, getUnsignedInteger(8));
+        add(SPARE, getUnsignedInteger(8));
         add(SOG, getUnsignedDecimal(10, 10, 1));
         add(POSITION_ACCURACY, getUnsignedInteger(1));
         add(LONGITUDE, getSignedDecimal(28, 600000, 6));
@@ -37,8 +37,13 @@ public class AisRadioMsg18 extends AisRadioMsg {
         add(COG, getUnsignedDecimal(12, 10, 1));
         add(TRUE_HEADING, getUnsignedInteger(9));
         add(TIME_STAMP, getUnsignedInteger(6));
-        add(RESERVED_FOR_REGIONAL_APPLICATIONS, getUnsignedInteger(4));
-        add(SPARE, getUnsignedInteger(4));
+        add(SPARE2, getUnsignedInteger(2));
+        add(CLASS_B_UNIT_FLAG, getUnsignedInteger(1));
+        add(CLASS_B_DISPLAY_FLAG, getUnsignedInteger(1));
+        add(CLASS_B_DSC_FLAG, getUnsignedInteger(1));
+        add(CLASS_B_BAND_FLAG, getUnsignedInteger(1));
+        add(CLASS_B_MESSAGE_22_FLAG, getUnsignedInteger(1));
+        add(ASSIGNED_MODE_FLAG, getUnsignedInteger(1));
         add(RAIM_FLAG, getUnsignedInteger(1));
         add(COMMUNICATION_STATE_SELECTOR_FLAG, getUnsignedInteger(1));
         add(COMMUNICATION_STATE, getUnsignedInteger(19));

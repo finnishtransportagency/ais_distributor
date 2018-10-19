@@ -8,9 +8,9 @@
  * the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,8 +22,11 @@ package fi.liikennevirasto.ais_distributor.model;
 
 import fi.liikennevirasto.ais_distributor.util.AisRadioMsgParser;
 import org.hamcrest.collection.IsIterableContainingInOrder;
+import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +37,7 @@ import static org.junit.Assert.assertThat;
 public class AisRadioMsg1Test {
 
     @Test
-    public void testParseSingleMessage() {
+    public void testParseSingleMessage() throws JSONException {
 
         String rawLine = "!BSVDM,1,1,,B,1CLB2s?P0224=udSEk>Vpwv80<01,0*17";
 
@@ -43,7 +46,7 @@ public class AisRadioMsg1Test {
                 "Repeat indicator",
                 "User ID",
                 "Navigational status",
-                "Rate of turn",
+                "Rate of turn ROTAIS",
                 "SOG",
                 "Position accuracy",
                 "Longitude",
@@ -51,7 +54,7 @@ public class AisRadioMsg1Test {
                 "COG",
                 "True heading",
                 "Time stamp",
-                "Reserved for regional applications",
+                "Special manoeuvre indicator",
                 "Spare",
                 "RAIM-flag",
                 "Communication state");
@@ -79,5 +82,9 @@ public class AisRadioMsg1Test {
 
         Assert.assertThat(msg.toListOfKeys(), IsIterableContainingInOrder.contains(expectedKeys.toArray()));
         Assert.assertThat(msg.toListOfParsedValues(), IsIterableContainingInOrder.contains(expectedValues.toArray()));
+        Assert.assertThat(msg.toListOfPublicParsedValues(), IsIterableContainingInOrder.contains(expectedValues.toArray())); // all values public
+
+        String expectedGeoJsonStr = GeoJsonTestUtil.getExpectedGeoJsonString(expectedKeys, expectedValues); // all values public
+        JSONAssert.assertEquals(expectedGeoJsonStr, msg.toPublicGeoJsonDataString(), JSONCompareMode.STRICT);
     }
 }
