@@ -59,7 +59,7 @@ public class AisRadioMsg9Test {
                 "Assigned mode flag",
                 "RAIM-flag",
                 "Communication state selector flag",
-                "Communication state");
+                "Communication state in hex");
 
         List<String> expectedValues = Arrays.asList(
                 "9",

@@ -18,13 +18,24 @@
     </springProfile>
 
     <springProfile name="dev,test,prod">
-        <appender name="journal" class="org.gnieh.logback.SystemdJournalAppender" />
+
+        <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>./ais-distributor.log</file>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <Pattern>${FILE_LOG_PATTERN}</Pattern>
+            </encoder>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>./archived/ais-distributor_%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>10</maxHistory>
+                <totalSizeCap>100MB</totalSizeCap>
+            </rollingPolicy>
+        </appender>
 
         <logger name="org.springframework" level="INFO" />
         <logger name="fi.liikennevirasto.ais_distributor" level="INFO" />
 
         <root level="WARN">
-            <appender-ref ref="journal" />
+            <appender-ref ref="file" />
         </root>
     </springProfile>
 </configuration>

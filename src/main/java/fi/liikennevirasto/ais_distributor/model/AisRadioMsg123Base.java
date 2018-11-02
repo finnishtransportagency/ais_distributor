@@ -41,6 +41,6 @@ public abstract class AisRadioMsg123Base extends AisPositionMsg {
         add(SPECIAL_MANOEUVRE_INDICATOR, getUnsignedInteger(2));
         add(SPARE, getUnsignedInteger(3));
         add(RAIM_FLAG, getUnsignedInteger(1));
-        add(COMMUNICATION_STATE, getUnsignedInteger(19));
+        add(COMMUNICATION_STATE, getHexString(19));
     }
 }

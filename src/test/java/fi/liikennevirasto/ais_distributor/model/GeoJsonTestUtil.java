@@ -52,17 +52,18 @@ public class GeoJsonTestUtil {
                 if (addedCount > 0) {
                     sb.append(",");
                 }
-                sb.append(getQuotedString(keys.get(i)));
+                String key = keys.get(i);
+                sb.append(getQuotedString(key));
                 sb.append(":");
-                sb.append(getValueToAppend(values.get(i)));
+                sb.append(getValueToAppend(key, values.get(i)));
                 addedCount++;
             }
         }
         return sb.toString();
     }
 
-    private static String getValueToAppend(String str) {
-        return isNumeric(str) ? str : getQuotedString(str);
+    private static String getValueToAppend(String key, String value) {
+        return (key.endsWith("in hex") || !isNumeric(value)) ? getQuotedString(value) : value;
     }
 
     private static String getQuotedString(String str) {

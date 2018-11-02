@@ -21,23 +21,30 @@
 package fi.liikennevirasto.ais_distributor.client;
 
 import fi.liikennevirasto.ais_distributor.controller.AisDistributor;
+import fi.liikennevirasto.ais_distributor.util.AisConnectionDetails;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
+@Component
 public class AisWebSocketClient extends WebSocketClient implements AutoCloseable {
 
+    private static final Marker FATAL = MarkerFactory.getMarker("FATAL");
     private static final Logger LOGGER = LoggerFactory.getLogger(AisWebSocketClient.class);
 
     private final AisDistributor aisDistributor;
 
-    public AisWebSocketClient(URI serverUri, AisDistributor aisDistributor) {
-        super(serverUri);
+    @Autowired
+    public AisWebSocketClient(AisConnectionDetails aisConnectionDetails, AisDistributor aisDistributor) {
+        super(aisConnectionDetails.getUri());
         this.aisDistributor = aisDistributor;
     }
 
@@ -63,16 +70,7 @@ public class AisWebSocketClient extends WebSocketClient implements AutoCloseable
 
     @Override
     public void onError(Exception ex) {
-        LOGGER.error("Failed to connect to AIS Connector", ex);
-    }
-
-    @Override
-    public void close() {
-        try {
-            closeBlocking();
-        } catch (InterruptedException e) {
-            LOGGER.error("Failed to close WebSocket connection", e);
-        }
+        LOGGER.error(FATAL, "Failed to connect to AIS Connector", ex);
     }
 
 }

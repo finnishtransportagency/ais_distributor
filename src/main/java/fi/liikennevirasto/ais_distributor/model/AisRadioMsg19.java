@@ -43,7 +43,7 @@ public class AisRadioMsg19 extends AisPositionMsg implements AisShipTypeMsg {
         add(SPARE2, getUnsignedInteger(4));
         add(NAME, getStringValue(120));
         add(TYPE_OF_SHIP_AND_CARGO_TYPE, getUnsignedInteger(8));
-        add(DIMENSION_OF_SHIP_REFERENCE_FOR_POSITION, getUnsignedInteger(30));
+        add(DIMENSION_OF_SHIP_REFERENCE_FOR_POSITION, getDimensionOfShip30bits());
         add(TYPE_OF_ELECTRONIC_POSITION_FIXING_DEVICE, getUnsignedInteger(4));
         add(RAIM_FLAG, getUnsignedInteger(1));
         add(DTE, getUnsignedInteger(1));

@@ -7,8 +7,8 @@ spring:
 
 logging:
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5marker %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5marker %-5level %logger{36} - %msg%n"
 
 management:
   endpoints:
@@ -18,3 +18,9 @@ management:
 
 server:
   port: 8081
+
+ais:
+  distributor:
+    connector-web-socket:
+      reconnect-initial-delay: 20000
+      reconnect-fixed-delay: 10000

@@ -44,7 +44,8 @@ import static org.junit.Assert.*;
         "user=user",
         "passwd=passwd",
         "address=localhost",
-        "port=8080"
+        "port=8080",
+        "ais.scheduling.enabled=false"
 })
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AisWebSocketTest {

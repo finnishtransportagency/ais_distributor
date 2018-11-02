@@ -45,7 +45,7 @@ public class AisRadioMsg24BTest {
                 "User ID",
                 "Part number",
                 "Type of ship and cargo type",
-                "Vendor ID",
+                "Vendor ID in hex",
                 "Call sign",
                 "Dimension of ship/reference for position",
                 "Type of electronic position fixing device",
@@ -58,9 +58,9 @@ public class AisRadioMsg24BTest {
                 "112233445",
                 "1",
                 "36",
-                "1234567",
+                "31CB3D35DB7",
                 "CALLSIG",
-                "10502348",
+                "A=5,B=4,C=3,D=12",
                 "0",
                 "1");
 
@@ -70,9 +70,9 @@ public class AisRadioMsg24BTest {
                 "112233445",
                 "1",
                 "36", // masked cargo type (for 30-39 & 50-59 the same as in authenticated stream)
-                "1234567",
+                "31CB3D35DB7",
                 "CALLSIG",
-                "10502348",
+                "A=5,B=4,C=3,D=12",
                 "0",
                 "1");
 

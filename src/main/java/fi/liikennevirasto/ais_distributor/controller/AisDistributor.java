@@ -54,18 +54,33 @@ public class AisDistributor {
     }
 
     public void distribute(String data) {
+        LOGGER.debug("Raw data: {}", data);
 
-        LOGGER.debug("Raw data: " + data);
-        discardCachedFirstPartIfOrphan(data);
+        if (AisRadioMsgParser.isSupportedMessageType(data)) {
+            if (cachedFirstPart != null && !isSecondPartOfMultipartRadioMessage(data)) {
+                discardCachedFirstPart();
+            }
 
-        if (AisRadioMsgParser.isSupportedMessageType(data) && isReadyForParsing(data)) {
-            AisRadioMsg msg = parse(data);
-            if (msg != null) {
-                broadcastToAuthenticatedClients(msg);
+            AisRadioMsgParser.validateChecksum(data);
 
-                if (AisRadioMsgFilter.allowedInPublicStream(msg)) {
-                    broadcastToPublicClients(msg);
-                }
+            if (isReadyForParsing(data)) {
+                parseAndBroadcast(data);
+            }
+
+        } else {
+            if (cachedFirstPart != null) {
+                discardCachedFirstPart();
+            }
+        }
+    }
+
+    private void parseAndBroadcast(String data) {
+        AisRadioMsg msg = parse(data);
+        if (msg != null) {
+            broadcastToAuthenticatedClients(msg);
+
+            if (AisRadioMsgFilter.allowedInPublicStream(msg)) {
+                broadcastToPublicClients(msg);
             }
         }
     }
@@ -86,23 +101,23 @@ public class AisDistributor {
         }
     }
 
-    private void discardCachedFirstPartIfOrphan(String data) {
-        if (cachedFirstPart != null && !(AisRadioMsgParser.isMultipartRadioMessage(data) && isSecondPart(data))) {
-            LOGGER.info("Discarded multipart message orphan first part");
-            cachedFirstPart = null;
-        }
+    private void discardCachedFirstPart() {
+        LOGGER.info("Discarded multipart message orphan first part");
+        cachedFirstPart = null;
     }
 
     private boolean isReadyForParsing(String data) {
-        if (AisRadioMsgParser.isMultipartRadioMessage(data) && !(isSecondPart(data) && cachedFirstPart != null)) {
-            if (isFirstPart(data)) {
-                cachedFirstPart = data; // cache first part now
-            } else {
-                LOGGER.info("Discarded multipart message " + (isSecondPart(data) ? "orphan second part" : "with part number > 2"));
-            }
-            return false;
+
+        if (!AisRadioMsgParser.isMultipartRadioMessage(data) || firstPartInCacheAndThisIsSecondPart(data)) {
+            return true;
         }
-        return true;
+
+        if (isFirstPart(data)) {
+            cachedFirstPart = data; // cache first part now
+        } else {
+            LOGGER.info("Discarded multipart message {}", isSecondPart(data) ? "orphan second part" : "with part number > 2");
+        }
+        return false;
     }
 
     private AisRadioMsg parse(String data) {
@@ -122,5 +137,13 @@ public class AisDistributor {
 
     private boolean isSecondPart(String data) {
         return AisRadioMsgParser.getPartNumber(data) == 2;
+    }
+
+    private boolean isSecondPartOfMultipartRadioMessage(String data) {
+        return AisRadioMsgParser.isMultipartRadioMessage(data) && isSecondPart(data);
+    }
+
+    private boolean firstPartInCacheAndThisIsSecondPart(String data) {
+        return cachedFirstPart != null && isSecondPart(data);
     }
 }

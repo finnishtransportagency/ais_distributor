@@ -44,16 +44,16 @@ public class AisRadioMsgParser {
         try {
             String msgType = getColumnValue(RAW_LINE_COLUMN.MESSAGE_TYPE, data);
             if (!msgType.matches(SUPPORTED_MESSAGE_TYPE_REGEX)) {
-                LOGGER.info("Unsupported message type: " + msgType);
+                LOGGER.info("Unsupported message type: {}", msgType);
                 return false;
             }
             if (data.split(",").length < 6) {
-                LOGGER.info("Too few columns: " + data);
+                LOGGER.info("Too few columns: {}", data);
                 return false;
             }
             return true;
         } catch (Exception e) {
-            LOGGER.info("Unsupported message structure: " + data);
+            LOGGER.info("Unsupported message structure: {}", data);
             return false;
         }
     }
@@ -70,7 +70,7 @@ public class AisRadioMsgParser {
         String msgClassSuffix = getMessageClassSuffix(binaryMsg);
 
         if (!SUPPORTED_MESSAGE_CLASS_SUFFIXES.contains(msgClassSuffix)) {
-            LOGGER.debug("Unsupported message: " + msgClassSuffix);
+            LOGGER.debug("Unsupported message: {}", msgClassSuffix);
             return null;
         }
 
@@ -79,10 +79,10 @@ public class AisRadioMsgParser {
                     .getDeclaredConstructor(String.class, List.class)
                     .newInstance(binaryMsg, rawLines);
         } catch (ClassNotFoundException e) {
-            LOGGER.info("Parser class not available for message " + msgClassSuffix);
+            LOGGER.info("Parser class not available for message {}", msgClassSuffix);
             return null;
         } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
-            LOGGER.error("Parsing failed for " + rawLines);
+            LOGGER.error("Parsing failed for {}", rawLines);
             return null;
         }
     }
@@ -93,6 +93,31 @@ public class AisRadioMsgParser {
 
     public static int getPartNumber(String rawLine) {
         return Integer.parseInt(getColumnValue(RAW_LINE_COLUMN.SENTENCE_NUMBER, rawLine));
+    }
+
+    public static void validateChecksum(String rawLine) {
+        String calculated = calculateChecksum(rawLine);
+        String received = getColumnValue(RAW_LINE_COLUMN.NUMBER_OF_FILL_BITS_AND_CHECK_VALUE, rawLine).split("\\*")[1];
+
+        String info = "[calculated=" + calculated + ", received=" + received + ", sentence=" + rawLine + "]";
+        if (!calculated.equals(received)) {
+            LOGGER.error("Wrong checksum {}", info);
+        } else {
+            LOGGER.debug("Checksum ok {}", info);
+        }
+    }
+
+    private static String calculateChecksum(String rawLine) {
+        int sum = 0;
+        for (int i = 1; i < rawLine.length(); i++) {
+            char ch = rawLine.charAt(i);
+            if (ch == '*') {
+                break;
+            }
+            sum = sum == 0 ? ch : sum ^ ch;
+        }
+
+        return String.format("%02X", sum);
     }
 
     private static String getColumnValue(RAW_LINE_COLUMN column, String rawLine) {

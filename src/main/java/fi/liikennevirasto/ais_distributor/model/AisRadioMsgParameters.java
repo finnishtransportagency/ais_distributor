@@ -36,12 +36,12 @@ public final class AisRadioMsgParameters {
     public static final String CLASS_B_MESSAGE_22_FLAG = "Class B Message 22 flag";
     public static final String CLASS_B_UNIT_FLAG = "Class B unit flag";
     public static final String COG = "COG";
-    public static final String COMMUNICATION_STATE = "Communication state";
+    public static final String COMMUNICATION_STATE = "Communication state in hex";
     public static final String COMMUNICATION_STATE_SELECTOR_FLAG = "Communication state selector flag";
     public static final String DESTINATION = "Destination";
     public static final String DIMENSION_OF_SHIP_REFERENCE_FOR_POSITION = "Dimension of ship/reference for position";
     public static final String DTE = "DTE";
-    public static final String ETA = "ETA";
+    public static final String ETA = "ETA [MMDDHHmm]";
     public static final String IMO_NUMBER = "IMO number";
     public static final String LATITUDE = "Latitude";
     public static final String LONGITUDE = "Longitude";
@@ -62,7 +62,7 @@ public final class AisRadioMsgParameters {
     public static final String TRUE_HEADING = "True heading";
     public static final String TYPE_OF_ELECTRONIC_POSITION_FIXING_DEVICE = "Type of electronic position fixing device";
     public static final String TYPE_OF_SHIP_AND_CARGO_TYPE = "Type of ship and cargo type";
-    public static final String VENDOR_ID = "Vendor ID";
+    public static final String VENDOR_ID = "Vendor ID in hex";
 
     public static final String MESSAGE_ID = "Message ID";
     public static final String REPEAT_INDICATOR = "Repeat indicator";

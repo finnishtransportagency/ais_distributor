@@ -34,9 +34,9 @@ public class AisRadioMsg24B extends AisMetadataMsg implements AisShipTypeMsg {
 
         add(PART_NUMBER, getUnsignedInteger(2));
         add(TYPE_OF_SHIP_AND_CARGO_TYPE, getUnsignedInteger(8));
-        add(VENDOR_ID, getStringValue(42));
+        add(VENDOR_ID, getHexString(42));
         add(CALL_SIGN, getStringValue(42));
-        add(DIMENSION_OF_SHIP_REFERENCE_FOR_POSITION, getUnsignedInteger(30));
+        add(DIMENSION_OF_SHIP_REFERENCE_FOR_POSITION, getDimensionOfShip30bits());
         add(TYPE_OF_ELECTRONIC_POSITION_FIXING_DEVICE, getUnsignedInteger(4));
         add(SPARE, getUnsignedInteger(2));
     }

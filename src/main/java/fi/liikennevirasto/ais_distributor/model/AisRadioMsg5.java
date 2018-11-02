@@ -37,9 +37,9 @@ public class AisRadioMsg5 extends AisMetadataMsg implements AisShipTypeMsg {
         add(CALL_SIGN, getStringValue(42));
         add(NAME, getStringValue(120));
         add(TYPE_OF_SHIP_AND_CARGO_TYPE, getUnsignedInteger(8));
-        add(DIMENSION_OF_SHIP_REFERENCE_FOR_POSITION, getUnsignedInteger(30));
+        add(DIMENSION_OF_SHIP_REFERENCE_FOR_POSITION, getDimensionOfShip30bits());
         add(TYPE_OF_ELECTRONIC_POSITION_FIXING_DEVICE, getUnsignedInteger(4));
-        add(ETA, getUnsignedInteger(20));
+        add(ETA, getEta20bits());
         add(MAXIMUM_PRESENT_STATIC_DRAUGHT, getUnsignedDecimal(8, 10, 1));
         add(DESTINATION, getStringValue(120));
         add(DTE, getUnsignedInteger(1));

@@ -80,7 +80,7 @@ public class AisRadioMsg19Test {
                 "15",
                 "TEST NAME CLSB MSG19",
                 "37",
-                "14704771",
+                "A=7,B=6,C=2,D=3",
                 "1",
                 "0",
                 "1",
@@ -102,7 +102,7 @@ public class AisRadioMsg19Test {
                 "15",
                 "TEST NAME CLSB MSG19",
                 "37", // masked cargo type (for 30-39 & 50-59 the same as in authenticated stream)
-                "14704771",
+                "A=7,B=6,C=2,D=3",
                 "1",
                 "0",
                 "1",

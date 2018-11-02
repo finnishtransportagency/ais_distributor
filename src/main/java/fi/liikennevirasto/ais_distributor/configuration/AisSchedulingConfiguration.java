@@ -18,19 +18,13 @@
  * limitations under the Licence.
  * =====================================END========================================
  */
-package fi.liikennevirasto.ais_distributor.controller;
+package fi.liikennevirasto.ais_distributor.configuration;
 
-import fi.liikennevirasto.ais_distributor.util.AisConnectionDetails;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 @Configuration
-public class AisDistributorConfiguration {
-
-    @Bean
-    public AisConnectionDetails aisConnectionDetails(Environment env) {
-        return new AisConnectionDetails(env);
-    }
-
-}
+@ConditionalOnProperty(value = "ais.scheduling.enabled", havingValue = "true", matchIfMissing = true)
+public class AisSchedulingConfiguration {}

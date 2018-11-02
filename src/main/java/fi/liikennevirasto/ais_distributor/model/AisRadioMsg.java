@@ -113,6 +113,25 @@ public abstract class AisRadioMsg {
         return Ais6BitConverter.to6BitEncodedString(getNextSubstring(size)).trim();
     }
 
+    protected String getHexString(int size) {
+        return Long.toHexString(Long.parseLong(getNextSubstring(size), 2)).toUpperCase(); // long for the 42 bits of Vendor ID
+    }
+
+    protected String getDimensionOfShip30bits() {
+        return "A=" + getUnsignedInteger(9) +
+                ",B=" + getUnsignedInteger(9) +
+                ",C=" + getUnsignedInteger(6) +
+                ",D=" + getUnsignedInteger(6);
+    }
+
+    protected String getEta20bits() {
+        return getEtaPart(4) + getEtaPart(5) + getEtaPart(5) + getEtaPart(6);
+    }
+
+    private String getEtaPart(int size) {
+        return String.format("%02d", getUnsignedInteger(size));
+    }
+
     @Override
     public String toString() {
         return toRawAndParsedDataString();
@@ -123,11 +142,11 @@ public abstract class AisRadioMsg {
     }
 
     public final String toRawAndParsedDataString() {
-        return "{\"data\": {\"raw\": " + toRawDataString() + ", \"converted\": \"" + toParsedDataString() + "\"}}";
+        return "{\"data\":{\"raw\":" + toRawDataString() + ",\"parsed\":\"" + toParsedDataString() + "\"}}";
     }
 
     private String toRawDataString() {
-        return "[\"" + String.join("\", \"", rawDataParts) + "\"]";
+        return "[\"" + String.join("\",\"", rawDataParts) + "\"]";
     }
 
     public final String toParsedDataString() {
@@ -143,11 +162,11 @@ public abstract class AisRadioMsg {
     public abstract boolean isPositionMsg();
 
     private String toDataString(Function<Map.Entry<String, Object>, String> mapper) {
-        return getParameterEntrySet().stream().map(mapper).collect(Collectors.joining(", "));
+        return getParameterEntrySet().stream().map(mapper).collect(Collectors.joining("|"));
     }
 
     private String getParsedEntry(String key, Object value) {
-        return key + ": " + value;
+        return key + "§" + value;
     }
 
     protected Object getPublicValue(Map.Entry<String, Object> v) { // default implementation

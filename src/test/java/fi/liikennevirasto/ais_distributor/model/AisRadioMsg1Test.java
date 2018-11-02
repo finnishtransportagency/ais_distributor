@@ -57,7 +57,7 @@ public class AisRadioMsg1Test {
                 "Special manoeuvre indicator",
                 "Spare",
                 "RAIM-flag",
-                "Communication state");
+                "Communication state in hex");
 
         List<String> expectedValues = Arrays.asList(
                 "1",
@@ -75,7 +75,7 @@ public class AisRadioMsg1Test {
                 "0",
                 "0",
                 "0",
-                "49153");
+                "C001");
 
         AisRadioMsg msg = AisRadioMsgParser.parseToAisRadioMessage(rawLine);
         assertThat(msg, instanceOf(AisRadioMsg1.class));

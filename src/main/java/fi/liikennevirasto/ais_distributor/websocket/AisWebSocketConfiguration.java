@@ -24,8 +24,12 @@ import fi.liikennevirasto.ais_distributor.configuration.AisDistributorProperties
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.web.socket.config.annotation.*;
 import org.springframework.web.socket.server.HandshakeInterceptor;
+
+import java.util.concurrent.Executors;
 
 @Configuration
 @EnableWebSocket
@@ -83,4 +87,10 @@ public class AisWebSocketConfiguration implements WebSocketConfigurer {
     public AisWebSocketHandler aisPublicGeoJsonDataSocketHandler() {
         return new AisTextWebSocketHandler();
     }
+
+    @Bean
+    public TaskScheduler taskScheduler() {
+        return new ConcurrentTaskScheduler(Executors.newSingleThreadScheduledExecutor());
+    }
+
 }
