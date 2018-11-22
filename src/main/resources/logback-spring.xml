@@ -26,7 +26,7 @@
             </encoder>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <fileNamePattern>./archived/ais-distributor_%d{yyyy-MM-dd}.log</fileNamePattern>
-                <maxHistory>10</maxHistory>
+                <maxHistory>30</maxHistory>
                 <totalSizeCap>100MB</totalSizeCap>
             </rollingPolicy>
         </appender>
