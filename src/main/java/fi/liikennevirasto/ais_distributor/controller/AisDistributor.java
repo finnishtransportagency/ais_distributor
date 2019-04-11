@@ -86,7 +86,8 @@ public class AisDistributor {
     }
 
     private void broadcastToAuthenticatedClients(AisRadioMsg msg) {
-        msg.getRawDataParts().forEach(aisRawDataSocketHandler::broadcast);
+        //msg.getRawDataParts().forEach(aisRawDataSocketHandler::broadcast);
+        msg.getRawDataPartsWithTimestamp().forEach(aisRawDataSocketHandler::broadcast);
         aisParsedDataSocketHandler.broadcast(msg.toParsedDataString());
         aisRawAndParsedDataSocketHandler.broadcast(msg.toRawAndParsedDataString());
     }

@@ -35,14 +35,21 @@ public abstract class AisRadioMsg {
     private List<String> rawDataParts;
     private String binaryMsg;
     private int readOffset = 0;
+    private long timestamp;
 
     public AisRadioMsg(String binaryMsg, List<String> rawDataParts) {
         this.rawDataParts = rawDataParts;
         this.binaryMsg = binaryMsg;
+        this.timestamp = new Date().getTime();
 
+        add(EXT_TIMESTAMP, timestamp);
         add(MESSAGE_ID, getUnsignedInteger(6));
         add(REPEAT_INDICATOR, getUnsignedInteger(2));
         add(USER_ID, getUnsignedInteger(30));
+    }
+
+    public long getTimestamp() {
+        return this.timestamp;
     }
 
     protected final <T> void add(String name, T value) {
@@ -137,8 +144,12 @@ public abstract class AisRadioMsg {
         return toRawAndParsedDataString();
     }
 
-    public final List<String> getRawDataParts() {
-        return rawDataParts;
+    public final List<String> getRawDataPartsWithTimestamp(){
+        List<String> allRawData = new ArrayList<>();
+        for(String str:rawDataParts) {
+            allRawData.add("\\s:002300000,c:" + this.timestamp + "*xx\\" + str);
+        }
+        return allRawData;
     }
 
     public final String toRawAndParsedDataString() {
@@ -146,7 +157,7 @@ public abstract class AisRadioMsg {
     }
 
     private String toRawDataString() {
-        return "[\"" + String.join("\",\"", rawDataParts) + "\"]";
+        return "[\"\\s:002300000,c:" + this.timestamp + "*xx\\" + String.join("\",\"", rawDataParts) + "\"]";
     }
 
     public final String toParsedDataString() {

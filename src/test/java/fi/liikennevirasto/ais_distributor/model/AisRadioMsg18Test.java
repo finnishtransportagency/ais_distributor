@@ -21,6 +21,7 @@
 package fi.liikennevirasto.ais_distributor.model;
 
 import fi.liikennevirasto.ais_distributor.util.AisRadioMsgParser;
+import org.assertj.core.data.Index;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.json.JSONException;
 import org.junit.Assert;
@@ -42,6 +43,7 @@ public class AisRadioMsg18Test {
         String rawLine = "!AIVDM,1,1,,A,B6CdCm0t3`tba35f@V9faHi7kP06,0*58";
 
         List<String> expectedKeys = Arrays.asList(
+                "Ext_timestamp",
                 "Message ID",
                 "Repeat indicator",
                 "User ID",
@@ -63,8 +65,11 @@ public class AisRadioMsg18Test {
                 "RAIM-flag",
                 "Communication state selector flag",
                 "Communication state in hex");
+        AisRadioMsg msg = AisRadioMsgParser.parseToAisRadioMessage(rawLine);
+        String timeStamp = String.valueOf(msg.getTimestamp());
 
         List<String> expectedValues = Arrays.asList(
+                timeStamp,
                 "18",
                 "0",
                 "423302100",
@@ -87,7 +92,8 @@ public class AisRadioMsg18Test {
                 "1",
                 "60006");
 
-        AisRadioMsg msg = AisRadioMsgParser.parseToAisRadioMessage(rawLine);
+
+
         assertThat(msg, instanceOf(AisRadioMsg18.class));
 
         Assert.assertThat(msg.toListOfKeys(), IsIterableContainingInOrder.contains(expectedKeys.toArray()));

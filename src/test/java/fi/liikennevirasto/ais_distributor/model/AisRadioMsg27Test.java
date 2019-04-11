@@ -42,6 +42,7 @@ public class AisRadioMsg27Test {
         String rawLine = "!AIVDM,1,1,,B,KC5E2b@U19PFdLbMuc5=ROv62<7m,0*16";
 
         List<String> expectedKeys = Arrays.asList(
+                "Ext_timestamp",
                 "Message ID",
                 "Repeat indicator",
                 "User ID",
@@ -56,7 +57,11 @@ public class AisRadioMsg27Test {
                 "Spare"
         );
 
+        AisRadioMsg msg = AisRadioMsgParser.parseToAisRadioMessage(rawLine);
+        String timeStamp = String.valueOf(msg.getTimestamp());
+
         List<String> expectedValues = Arrays.asList(
+                timeStamp,
                 "27",
                 "1",
                 "206914217",
@@ -70,7 +75,7 @@ public class AisRadioMsg27Test {
                 "0",
                 "1");
 
-        AisRadioMsg msg = AisRadioMsgParser.parseToAisRadioMessage(rawLine);
+
         assertThat(msg, instanceOf(AisRadioMsg27.class));
 
         Assert.assertThat(msg.toListOfKeys(), IsIterableContainingInOrder.contains(expectedKeys.toArray()));

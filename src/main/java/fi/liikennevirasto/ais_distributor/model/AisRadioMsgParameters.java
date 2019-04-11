@@ -64,6 +64,7 @@ public final class AisRadioMsgParameters {
     public static final String TYPE_OF_SHIP_AND_CARGO_TYPE = "Type of ship and cargo type";
     public static final String VENDOR_ID = "Vendor ID in hex";
 
+    public static final String EXT_TIMESTAMP = "Ext_timestamp";
     public static final String MESSAGE_ID = "Message ID";
     public static final String REPEAT_INDICATOR = "Repeat indicator";
     public static final String USER_ID = "User ID";
