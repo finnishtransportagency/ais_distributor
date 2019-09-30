@@ -157,7 +157,7 @@ public abstract class AisRadioMsg {
     }
 
     private String toRawDataString() {
-        return "[\"\\s:002300000,c:" + this.timestamp + "*xx\\" + String.join("\",\"", rawDataParts) + "\"]";
+        return "[\"\\\\s:002300000,c:" + this.timestamp + "*xx\\\\" + String.join("\",\"", rawDataParts) + "\"]";
     }
 
     public final String toParsedDataString() {
